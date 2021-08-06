@@ -2,8 +2,12 @@ package main
 
 import (
 	"gin-http-framework/controller"
+	"gin-http-framework/middlewares"
 	"gin-http-framework/service"
+	"io"
+	"os"
 
+	// gindump
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,8 +16,17 @@ var (
 	videoController controller.VideoController = controller.New(videoService)
 )
 
+func setupLogOutput() {
+	f, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+}
+
 func main() {
-	server := gin.Default()
+
+	setupLogOutput()
+	server := gin.New()
+
+	server.Use(gin.Recovery(), middlewares.Logger(), middlewares.BasicAuth())
 
 	server.GET("/videos", func(ctx *gin.Context) {
 		ctx.JSON(200, videoController.FindAll())
