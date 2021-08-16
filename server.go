@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 
-	// gindump
 	"github.com/gin-gonic/gin"
 )
 
